@@ -1,1 +1,1 @@
-export const api ='https'
+export const api = "https://dummyjson.com/users";

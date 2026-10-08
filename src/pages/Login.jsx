@@ -17,7 +17,7 @@ const Login = () => {
     const loadUsers = async () => {
       try {
         const { data } = await axios.get(api);
-        setAllUsers(data);
+        setAllUsers(Array.isArray(data) ? data : data.users ?? []);
       } catch (err) {
         toast.error(
           err.response?.data?.message ||

@@ -34,7 +34,7 @@ const Register = () => {
     }
 
     try {
-      await axios.post(api, formData);
+      await axios.post(`${api}/add`, formData);
 
       setFormData({
         name: "",
