@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-// import { USERS_API_URL } from "../api/users";
+import { api } from "../api/users";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -34,7 +34,7 @@ const Register = () => {
     }
 
     try {
-      await axios.post("https://6ac7275275a4ce3fe7216438.mockapi.io/users", formData);
+      await axios.post(api, formData);
 
       setFormData({
         name: "",

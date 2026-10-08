@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-// import { USERS_API_URL } from "../api/users";
+import { api } from "../api/users";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -16,10 +16,13 @@ const Login = () => {
   useEffect(() => {
     const loadUsers = async () => {
       try {
-        const { data } = await axios.get("https://6ac7275275a4ce3fe7216438.mockapi.io/users");
+        const { data } = await axios.get(api);
         setAllUsers(data);
       } catch (err) {
-        toast.error(err.data.message || "Unable to load accounts. Please try again.");
+        toast.error(
+          err.response?.data?.message ||
+            "Unable to load accounts. Please try again."
+        );
       }
     };
 
