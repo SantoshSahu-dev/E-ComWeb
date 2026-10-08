@@ -1,4 +1,55 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
+// import { USERS_API_URL } from "../api/users";
+
 const Register = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const name = formData.name.trim();
+    const email = formData.email.trim();
+    const password = formData.password.trim();
+
+    if (!name || !email || !password) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+
+    try {
+      await axios.post("https://6ac7275275a4ce3fe7216438.mockapi.io/users", formData);
+
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+      });
+
+      toast.success("Registration successful!");
+     navigate("/login");
+    } catch (error) {
+      console.log(error)
+      toast.error( "Unable to register. Please try again.");
+    }
+  };
+
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-8">
       <section className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm">
@@ -7,7 +58,7 @@ const Register = () => {
           Register for a ShopEase account.
         </p>
 
-        <form className="mt-6 space-y-4">
+        <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
           <div>
             <label
               htmlFor="name"
@@ -20,7 +71,8 @@ const Register = () => {
               name="name"
               type="text"
               autoComplete="name"
-              required
+              value={formData.name}
+              onChange={handleChange}
               className="h-11 w-full rounded-xl border border-slate-200 px-3 text-sm outline-none focus:border-orange-400 focus:ring-4 focus:ring-orange-500/10"
             />
           </div>
@@ -37,7 +89,8 @@ const Register = () => {
               name="email"
               type="email"
               autoComplete="email"
-              required
+              value={formData.email}
+              onChange={handleChange}
               className="h-11 w-full rounded-xl border border-slate-200 px-3 text-sm outline-none focus:border-orange-400 focus:ring-4 focus:ring-orange-500/10"
             />
           </div>
@@ -54,7 +107,8 @@ const Register = () => {
               name="password"
               type="password"
               autoComplete="new-password"
-              required
+              value={formData.password}
+              onChange={handleChange}
               className="h-11 w-full rounded-xl border border-slate-200 px-3 text-sm outline-none focus:border-orange-400 focus:ring-4 focus:ring-orange-500/10"
             />
           </div>

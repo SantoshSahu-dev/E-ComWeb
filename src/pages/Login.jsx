@@ -1,6 +1,72 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
+// import { USERS_API_URL } from "../api/users";
 
 const Login = () => {
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const [allusers, setAllUsers] = useState([]);
+
+  useEffect(() => {
+    const loadUsers = async () => {
+      try {
+        const { data } = await axios.get("https://6ac7275275a4ce3fe7216438.mockapi.io/users");
+        setAllUsers(data);
+      } catch (err) {
+        toast.error(err.data.message || "Unable to load accounts. Please try again.");
+      }
+    };
+
+    loadUsers();
+  }, []);
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const email = formData.email.trim();
+    const password = formData.password.trim();
+
+    if (!email || !password) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+
+
+     const user=allusers.find((ele)=>ele.email===formData.email)
+    if(!user){
+      toast.error("Email is not Register",{position:"top-right"})
+      return
+    }
+    if(user.password !== formData.password){
+      toast.error("Invalid password",{position:"top-right"})
+      return
+    }
+    const token="udyhisnccrghughbsnuhb$#@$V76."+user.id
+    localStorage.setItem("jwt_token",JSON.stringify(token))
+    setFormData({
+      email:"",
+      password:""
+    })
+    toast.success("Login Successfully.",{position:"top-center"})
+    navigate("/dashboard")
+
+  }
+
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
       <section className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm">
@@ -9,7 +75,7 @@ const Login = () => {
           Sign in to your ShopEase account.
         </p>
 
-        <form className="mt-6 space-y-4">
+        <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
           <div>
             <label
               htmlFor="email"
@@ -22,7 +88,8 @@ const Login = () => {
               name="email"
               type="email"
               autoComplete="email"
-              required
+              value={formData.email}
+              onChange={handleChange}
               className="h-11 w-full rounded-xl border border-slate-200 px-3 text-sm outline-none focus:border-orange-400 focus:ring-4 focus:ring-orange-500/10"
             />
           </div>
@@ -39,7 +106,8 @@ const Login = () => {
               name="password"
               type="password"
               autoComplete="current-password"
-              required
+              value={formData.password}
+              onChange={handleChange}
               className="h-11 w-full rounded-xl border border-slate-200 px-3 text-sm outline-none focus:border-orange-400 focus:ring-4 focus:ring-orange-500/10"
             />
           </div>
@@ -51,7 +119,6 @@ const Login = () => {
             Sign in
           </button>
         </form>
-
         <p className="mt-6 text-center text-sm text-slate-600">
           Don&apos;t have an account?{" "}
           <Link

@@ -8,7 +8,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const categories = [
   "Men",
@@ -20,6 +20,17 @@ const categories = [
 
 const Navbar=()=> {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    () => Boolean(localStorage.getItem("jwt_token")),
+  );
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("jwt_token");
+    setIsLoggedIn(false);
+    setMobileMenuOpen(false);
+    navigate("/");
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md">
@@ -141,12 +152,22 @@ const Navbar=()=> {
           </button>
 
           {/* Login */}
-          <Link
-            to="/login"
-            className="hidden items-center rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:border-orange-500 hover:text-orange-500 sm:flex"
-          >
-            Login
-          </Link>
+          {isLoggedIn ? (
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="hidden items-center rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:border-orange-500 hover:text-orange-500 sm:flex"
+            >
+              Logout
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              className="hidden items-center rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:border-orange-500 hover:text-orange-500 sm:flex"
+            >
+              Login
+            </Link>
+          )}
 
           {/* Cart */}
           <button
@@ -219,13 +240,25 @@ const Navbar=()=> {
 
             <div className="my-3 h-px bg-slate-100" />
 
-            <Link
-              to="/login"
-              className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50"
-            >
-              <User size={18} />
-              Login
-            </Link>
+            {isLoggedIn ? (
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50"
+              >
+                <User size={18} />
+                Logout
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50"
+              >
+                <User size={18} />
+                Login
+              </Link>
+            )}
 
             <Link
               to="/wishlist"
